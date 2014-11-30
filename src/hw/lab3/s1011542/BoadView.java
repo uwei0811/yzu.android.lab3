@@ -9,6 +9,8 @@ import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
+import android.os.Handler;
+import android.os.Message;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.view.MotionEvent;
@@ -19,10 +21,14 @@ public class BoadView extends View implements ReversiGameState,OnTouchListener{
 	
 	private Reversi game = null;
 	private Music gray_music;
+	private Handler mHandler;
+	private Thread mThread;
+	private int Clock;
 	public BoadView(Context context, AttributeSet attrs) {
 		super(context, attrs);
 		game = new Reversi();
 		game.setDelegate(this);
+		
 	}
 	
 	public BoadView(Activity context) {
@@ -31,10 +37,56 @@ public class BoadView extends View implements ReversiGameState,OnTouchListener{
 		game.setDelegate(this);
 		gray_music = new Music(context);
 		this.setOnTouchListener(this);
+		setclk();
+		mThread.start();
+	}
+	
+	private void setclk()
+	{
+		Clock = 60;
+		mThread = new Thread(){
+		    @Override
+		    public void run() {
+		        // TODO Auto-generated method stub           
+		        while(true){
+		            try{
+		                Message msg = new Message();
+		                msg.what = 1;
+		                mHandler.sendMessage(msg);
+		                Thread.sleep(200);
+		            }
+		            catch(Exception e){
+		                e.printStackTrace();
+		            }
+		        }
+		    }            
+		};
+		
+		mHandler = new Handler(){
+		    @Override
+		    public void handleMessage(Message msg) {
+		        Clock = Clock - 1;
+		        RefreshClk();
+		        if(Clock == 0)
+		        	Time_out();
+		        super.handleMessage(msg);
+		    }  
+		};
 	}
 
+	private void Time_out()
+	{
+		rest_clk();
+	}
+	
+	private void rest_clk()
+	{
+		Clock = 60;
+	}
+	
 	public void reset()
 	{
+		rest_clk();
 		game = null;
 		game = new Reversi();
 		game.setDelegate(this);
@@ -43,7 +95,6 @@ public class BoadView extends View implements ReversiGameState,OnTouchListener{
 	@Override
 	protected void onDraw(Canvas canvas) {
 		super.onDraw(canvas);
-		
 		PiecesType board[][] = game.getBoard();
 		Paint p = new Paint();  
 		
@@ -97,7 +148,7 @@ public class BoadView extends View implements ReversiGameState,OnTouchListener{
 		p.setTextSize(30);
 		p.setColor(Color.BLACK);
 		if(!game.isGameOver())
-			canvas.drawText("NOW PLAYER :", 10, 520, p);
+			canvas.drawText("NOW PLAYER :        倒數時間" + Clock+ "s", 10, 520, p);
 		else
 			canvas.drawText("GAME OVER", 10, 520, p);
 		
@@ -118,7 +169,10 @@ public class BoadView extends View implements ReversiGameState,OnTouchListener{
 			canvas.drawText("WHITE:" + game.getPiecesCount(PiecesType.WHITE), 90, 280, p);
 		}
 	}
-
+	private void RefreshClk() {
+		this.invalidate();
+	}
+	
 	@Override
 	public void GameStart() {
 		// TODO Auto-generated method stub
@@ -127,7 +181,9 @@ public class BoadView extends View implements ReversiGameState,OnTouchListener{
 
 	@Override
 	public void RefreshGame() {
+		rest_clk();
 		this.invalidate();
+		Log.d("REfa" , "-");
 	}
 
 	@Override
