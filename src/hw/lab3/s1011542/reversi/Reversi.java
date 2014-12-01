@@ -106,6 +106,14 @@ public class Reversi {
 		return count;
 	}
 	
+	public PiecesHistory getHistory() {
+		return this.history;
+	}
+	
+	public void setHistory(PiecesHistory history) {
+		this.history = history;
+	}
+	
 	public PiecesType getWinner() {
 		if ( !this.isGameOver() )
 			return null;
@@ -120,6 +128,7 @@ public class Reversi {
 				this.board[state.steps.get(i).pos.i][state.steps.get(i).pos.j] = state.steps.get(i).type;
 			}
 		}
+		this.calulatePossible();
 	}
 	
 	public void move(PiecesPos pos) {
