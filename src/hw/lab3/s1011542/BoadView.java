@@ -6,6 +6,7 @@ import hw.lab3.s1011542.reversi.Reversi;
 import hw.lab3.s1011542.reversi.ReversiGameState;
 import android.app.Activity;
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
@@ -24,36 +25,34 @@ public class BoadView extends View implements ReversiGameState,OnTouchListener{
 	private Handler mHandler;
 	private Thread mThread;
 	private int Clock;
-	public BoadView(Context context, AttributeSet attrs) {
-		super(context, attrs);
-		game = new Reversi();
-		game.setDelegate(this);
-		
-	}
-	
-	public BoadView(Activity context) {
+	private int Defaulf_Clock_time = 15;
+	private boolean Thread_lock;
+	public BoadView(Activity context,PiecesType[][] getBoard,int get_clk) {
 		super(context);
-		game = new Reversi();
+		game = new Reversi(0);
 		game.setDelegate(this);
 		gray_music = new Music(context);
 		this.setOnTouchListener(this);
+		set_Thread_lock(true);
 		setclk();
+		if(get_clk > 0)
+			Clock = get_clk;
 		mThread.start();
 	}
 	
 	private void setclk()
 	{
-		Clock = 60;
+		Clock = Defaulf_Clock_time;
 		mThread = new Thread(){
 		    @Override
 		    public void run() {
 		        // TODO Auto-generated method stub           
-		        while(true){
+		        while(Thread_lock){
 		            try{
 		                Message msg = new Message();
 		                msg.what = 1;
 		                mHandler.sendMessage(msg);
-		                Thread.sleep(200);
+		                Thread.sleep(1000);
 		            }
 		            catch(Exception e){
 		                e.printStackTrace();
@@ -74,6 +73,11 @@ public class BoadView extends View implements ReversiGameState,OnTouchListener{
 		};
 	}
 
+	public void set_Thread_lock(boolean lock)
+	{
+		Thread_lock = lock;
+	}
+	
 	private void Time_out()
 	{
 		rest_clk();
@@ -81,16 +85,21 @@ public class BoadView extends View implements ReversiGameState,OnTouchListener{
 	
 	private void rest_clk()
 	{
-		Clock = 60;
+		Clock = Defaulf_Clock_time;
 	}
 	
 	public void reset()
 	{
 		rest_clk();
 		game = null;
-		game = new Reversi();
+		game = new Reversi(0);
 		game.setDelegate(this);
 		RefreshGame();
+	}
+	
+	public int get_clk()
+	{
+		return Clock;
 	}
 	@Override
 	protected void onDraw(Canvas canvas) {
@@ -169,6 +178,7 @@ public class BoadView extends View implements ReversiGameState,OnTouchListener{
 			canvas.drawText("WHITE:" + game.getPiecesCount(PiecesType.WHITE), 90, 280, p);
 		}
 	}
+	
 	private void RefreshClk() {
 		this.invalidate();
 	}
@@ -219,5 +229,16 @@ public class BoadView extends View implements ReversiGameState,OnTouchListener{
        	}
        	
        	return true;
+	}
+	
+	public PiecesType[][] get_Board()
+	{
+		return game.getBoard();
+	}
+	
+	public void back()
+	{
+		game.back();
+		this.invalidate();
 	}
 }
