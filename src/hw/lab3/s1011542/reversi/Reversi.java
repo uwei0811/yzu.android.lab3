@@ -114,6 +114,10 @@ public class Reversi {
 		this.history = history;
 	}
 	
+	public void setBoard(PiecesType board[][]) {
+		this.board = board;
+	}
+	
 	public PiecesType getWinner() {
 		if ( !this.isGameOver() )
 			return null;
