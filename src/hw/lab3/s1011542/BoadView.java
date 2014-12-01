@@ -81,6 +81,8 @@ public class BoadView extends View implements ReversiGameState,OnTouchListener{
 	private void Time_out()
 	{
 		rest_clk();
+		if(game != null)
+			game.foceChangePlayer();
 	}
 	
 	private void rest_clk()

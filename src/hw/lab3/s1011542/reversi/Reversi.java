@@ -123,16 +123,30 @@ public class Reversi {
 			return null;
 		return this.getPiecesCount(PiecesType.BLACK) > this.getPiecesCount(PiecesType.WHITE) ? PiecesType.BLACK : PiecesType.WHITE;
 	}
+	
+	public void foceChangePlayer() {
+		this.clearPossibleMove();
+		this.currentPlayer = this.currentPlayer == PiecesType.BLACK ? PiecesType.WHITE : PiecesType.BLACK;
+		this.calulatePossible();
+		if(this.delegate != null)
+			this.delegate.ChangePlayer();
+		if(this.delegate != null) {
+			this.delegate.RefreshGame();
+		}
+	}
 
 	public void back() {
 		State state = this.history.back();
 		if( state != null) {
 			this.currentPlayer = state.player;
-			for(int i = 0 ; i < state.steps.size(); i++) {
+			for(int i = state.steps.size() - 1  ; i >= 0 ; i--) {
 				this.board[state.steps.get(i).pos.i][state.steps.get(i).pos.j] = state.steps.get(i).type;
 			}
 		}
 		this.calulatePossible();
+		if(this.delegate != null) {
+			this.delegate.RefreshGame();
+		}
 	}
 	
 	public void move(PiecesPos pos) {
