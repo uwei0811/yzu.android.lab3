@@ -1,5 +1,8 @@
 package hw.lab3.s1011542.reversi;
 
+import hw.lab3.s1011542.reversi.PiecesHistory.State;
+import hw.lab3.s1011542.reversi.PiecesHistory.State.Step;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -20,16 +23,23 @@ public class Reversi {
 	/* the board */
 	private PiecesType board[][] = null;
 	
-	private List<PiecesPos> posiible = new ArrayList<PiecesPos>();
+	private List<PiecesPos> posiible = null;
 	
 	/* the current player */
 	private PiecesType currentPlayer;
 	
 	
+	private int level;
+	
+	private PiecesHistory history = null;
+
 
 	/* Constructor for initial game */
-	public Reversi() {
-		
+	public Reversi(int level) {
+
+		this.level = level;
+		this.history = new PiecesHistory();
+		this.posiible = new ArrayList<PiecesPos>();		
 		/* clean possible list */
 		this.posiible.clear();
 		
@@ -38,7 +48,8 @@ public class Reversi {
 		this.board = new PiecesType[dim][dim];
 		/* set first player */
 		this.currentPlayer = PiecesType.BLACK;
-		
+		this.history.next(this.currentPlayer);
+
 		this.gameOver = false;
 		
 		/* init the board */
@@ -100,6 +111,16 @@ public class Reversi {
 			return null;
 		return this.getPiecesCount(PiecesType.BLACK) > this.getPiecesCount(PiecesType.WHITE) ? PiecesType.BLACK : PiecesType.WHITE;
 	}
+
+	public void back() {
+		State state = this.history.back();
+		if( state != null) {
+			this.currentPlayer = state.player;
+			for(int i = 0 ; i < state.steps.size(); i++) {
+				this.board[state.steps.get(i).pos.i][state.steps.get(i).pos.j] = state.steps.get(i).type;
+			}
+		}
+	}
 	
 	public void move(PiecesPos pos) {
 		
@@ -114,7 +135,9 @@ public class Reversi {
 		
 		this.currentPlayer = this.currentPlayer == PiecesType.BLACK ? PiecesType.WHITE : PiecesType.BLACK;
 		this.clearPossibleMove();
-		this.addForbidden();
+		for(int i = 0 ; i < this.level ; i++){
+			this.addForbidden();
+		}
 		this.calulatePossible();
 		
 		if( this.posiible.size() != 0) {
@@ -132,6 +155,8 @@ public class Reversi {
 			}
 			
 		}
+
+		this.history.next(this.currentPlayer);
 		
 		if(this.delegate != null) {
 			this.delegate.RefreshGame();
@@ -186,6 +211,9 @@ public class Reversi {
 							total += step - 1;
 							if( doMove) {
 								while(step-- > 0) {
+									PiecesPos hpos = new PiecesPos(pos.i + oi* step,pos.j + oj* step);
+									Step hstep = new Step(hpos, board[ pos.i + oi* step ][ pos.j + oj* step]);
+									this.history.add(hstep);
 									board[ pos.i + oi* step ][ pos.j + oj* step] = this.currentPlayer;
 								}				
 							}
@@ -246,18 +274,26 @@ public class Reversi {
 		}
 		
 		if( this.board[0][0] == PiecesType.EMPTY || this.board[0][0] == PiecesType.POSSIBLE) {
+			Step hstep = new Step(start, board[0][0]);
+			this.history.add(hstep);
 			this.board[0][0] = PiecesType.FORBIDDEN;
 			return;
 		}
 		if( this.board[this.dim-1][0] == PiecesType.EMPTY || this.board[this.dim-1][0] == PiecesType.POSSIBLE) {
+			Step hstep = new Step(start, board[this.dim-1][0]);
+			this.history.add(hstep);
 			this.board[this.dim-1][0] = PiecesType.FORBIDDEN;
 			return;
 		}
 		if( this.board[0][this.dim-1] == PiecesType.EMPTY || this.board[0][this.dim-1] == PiecesType.POSSIBLE) {
+			Step hstep = new Step(start, board[0][this.dim-1]);
+			this.history.add(hstep);
 			this.board[0][this.dim-1] = PiecesType.FORBIDDEN;
 			return;
 		}
 		if( this.board[this.dim-1][this.dim-1] == PiecesType.EMPTY || this.board[this.dim-1][this.dim-1] == PiecesType.POSSIBLE) {
+			Step hstep = new Step(start, board[this.dim-1][this.dim-1]);
+			this.history.add(hstep);
 			this.board[this.dim-1][this.dim-1] = PiecesType.FORBIDDEN;
 			return;
 		}
@@ -282,6 +318,8 @@ public class Reversi {
 			}
 			
 			if( this.board[i][j] == PiecesType.EMPTY) {
+				Step hstep = new Step(start, board[i][j]);
+				this.history.add(hstep);
 				this.board[i][j] = PiecesType.FORBIDDEN;
 				pos.clear();
 				continue;
