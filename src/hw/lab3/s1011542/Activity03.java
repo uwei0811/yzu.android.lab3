@@ -32,8 +32,10 @@ public class Activity03 extends Activity {
 		setContentView(R.layout.activity03);
 		ly03 = (RelativeLayout) findViewById(R.id.layout_03);
 		ly03.setBackgroundResource(R.drawable.bgimage02);
+		
 		intent2 = this.getIntent();
 		bundle = new Bundle();
+		
 		btlvl01 = (ImageButton)findViewById(R.id.level1);
 		btlvl02 = (ImageButton)findViewById(R.id.level2);
 		btlvl03 = (ImageButton)findViewById(R.id.level3);
