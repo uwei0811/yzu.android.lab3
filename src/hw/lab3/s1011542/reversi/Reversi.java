@@ -126,11 +126,16 @@ public class Reversi {
 	public void setHistory(PiecesHistory history) {
 		this.history = history;
 		this.currentPlayer = this.history.getState().player;
+		this.calulatePossible();
+		
 	}
 	
 	
 	public void setBoard(PiecesType board[][]) {
-		this.board = board;
+		for(int i = 0 ; i < 8  ;i++)
+			for(int j= 0 ; j <8 ; j++)
+				this.board[i][j] = board[i][j];
+//		this.board = board;
 	}
 	
 	public PiecesType getWinner() {

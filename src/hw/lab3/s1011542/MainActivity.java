@@ -3,6 +3,7 @@ package hw.lab3.s1011542;
 import hw.lab3.s1011542.R;
 import android.app.Activity;
 import android.content.Intent;
+import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
@@ -19,11 +20,12 @@ public class MainActivity extends Activity {
 	private Intent intent;
 	private int level;
 	Bundle bundle;
+	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_main);
-
+		
 		init();
 		
 		Start.setOnClickListener(new OnClickListener(){
@@ -37,6 +39,15 @@ public class MainActivity extends Activity {
 		    intent.setClass(MainActivity.this, Activity03.class);
 			startActivityForResult(intent, 0);
 		}});
+		
+		Record.setOnClickListener(new OnClickListener(){
+			public void onClick(View v){
+			intent = null;
+			intent = new Intent();
+		    intent.setClass(MainActivity.this, Activity04.class);
+			startActivity(intent);
+		}});
+		
 	}
 
 	private void init()

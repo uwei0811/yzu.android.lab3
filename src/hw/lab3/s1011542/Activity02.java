@@ -40,11 +40,14 @@ public class Activity02 extends Activity {
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
+		Log.d("onCreate","-");
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity02);
 		Intent intent = this.getIntent();
 		Bundle bundle = intent.getExtras();
-		int level = bundle.getInt("level");	
+		int level = bundle.getInt("level");
+		if(level < 1)
+			level = 1;
 		init();
 		setlinster();
 		Log.d("level",""+level);
@@ -56,33 +59,45 @@ public class Activity02 extends Activity {
 
 	@Override
 	protected void onPause() {
-		ly02.removeAllViews();
-		view.destoryMusic();
+		Log.d("onPause","-");
 		saveData();
+		
+		ly02.removeAllViews();
+		
+		view.destoryMusic();
+		
+		view.Destroy();
+		
+		view = null;
+		
 		super.onPause();
 	}
 	
 	@Override
 	protected void onRestart() {
+		Log.d("onRestart","-");
 		setContentView(R.layout.activity02);
 		Intent intent = this.getIntent();
 		Bundle bundle = intent.getExtras();
 		int level = bundle.getInt("level");	
+		if(level < 1)
+			level = 1;
 		init();
 		setlinster();
-		Log.d("level",""+level);
 		if(view == null)
 			view = new BoadView(this,level);
 		ly02.addView(view, 480, 530);
-		loadData();
-		view.invalidate();
+	//	loadData();
+	//	view.invalidate();
 		super.onRestart();
 	}
-
 	
 	@Override
 	protected void onResume() {
+		Log.d("onResume","-");
 		loadData();
+		if(view.get_level() < 1)
+			view.set_level(1);
 		view.invalidate();
 		super.onResume();
 	}
@@ -113,7 +128,8 @@ public class Activity02 extends Activity {
 		});
 		back.setOnClickListener(new OnClickListener() {
 			public void onClick(View v) {
-				view.back();
+				if(!view.getGame().isGameOver())
+					view.back();
 			}
 		});
 		st01.setOnClickListener(new OnClickListener() {
@@ -316,9 +332,10 @@ public class Activity02 extends Activity {
 				history.getList().add(pstate);
 			}
 			//game.setHistory(history);
-			view.reset();
+			//view.reset();
 			view.getGame().setHistory(history);
 			view.setResume();
+			view.invalidate();
 			settings.edit().clear();
 			settings.edit().commit();
 			
