@@ -91,8 +91,21 @@ public class Reversi {
 		return this.posiible;
 	}
 	
+	public void setLevel(int level) {
+		this.level = level;
+	}
+	
+	public int getLevel() {
+		return this.level;
+	}
+	
 	public boolean isGameOver() {
 		return this.gameOver;
+	}
+	
+	public void setGameOver()
+	{
+		gameOver = true;
 	}
 	
 	public int getPiecesCount(PiecesType type) {
@@ -106,19 +119,49 @@ public class Reversi {
 		return count;
 	}
 	
+	public PiecesHistory getHistory() {
+		return this.history;
+	}
+	
+	public void setHistory(PiecesHistory history) {
+		this.history = history;
+		this.currentPlayer = this.history.getState().player;
+	}
+	
+	
+	public void setBoard(PiecesType board[][]) {
+		this.board = board;
+	}
+	
 	public PiecesType getWinner() {
 		if ( !this.isGameOver() )
 			return null;
 		return this.getPiecesCount(PiecesType.BLACK) > this.getPiecesCount(PiecesType.WHITE) ? PiecesType.BLACK : PiecesType.WHITE;
+	}
+	
+	public void foceChangePlayer() {
+		this.clearPossibleMove();
+		this.currentPlayer = this.currentPlayer == PiecesType.BLACK ? PiecesType.WHITE : PiecesType.BLACK;
+		this.calulatePossible();
+		this.history.next(this.currentPlayer);
+		if(this.delegate != null)
+			this.delegate.ChangePlayer();
+		if(this.delegate != null) {
+			this.delegate.RefreshGame();
+		}
 	}
 
 	public void back() {
 		State state = this.history.back();
 		if( state != null) {
 			this.currentPlayer = state.player;
-			for(int i = 0 ; i < state.steps.size(); i++) {
+			for(int i = state.steps.size() - 1  ; i >= 0 ; i--) {
 				this.board[state.steps.get(i).pos.i][state.steps.get(i).pos.j] = state.steps.get(i).type;
 			}
+		}
+		this.calulatePossible();
+		if(this.delegate != null) {
+			this.delegate.RefreshGame();
 		}
 	}
 	

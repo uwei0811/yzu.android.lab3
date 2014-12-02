@@ -17,6 +17,17 @@ public class PiecesHistory {
 				this.pos = pos;
 				this.type = type;
 			}
+			
+			public int i() {
+				return pos.i;
+			}
+			public int j() {
+				return pos.j;
+			}
+			
+			public PiecesType getType() {
+				return this.type;
+			}
 		}
 		PiecesType player;
 		List<Step> steps;
@@ -24,6 +35,14 @@ public class PiecesHistory {
 		public State(PiecesType p) {
 			this.player = p;
 			steps = new ArrayList<Step>();
+		}
+		
+		public PiecesType getPlayer() {
+			return this.player;
+		}
+		
+		public List<Step> getSteps() {
+			return this.steps;
 		}
 	}
 	

@@ -9,10 +9,21 @@ public enum PiecesType {
 	 *  POSSIBLE = �i�H�U����m
 	 *  FORBIDDON = ����U����l �]�Ǧ�^
 	 */
-	EMPTY,
-	WHITE,
-	BLACK,
-	POSSIBLE,
-	FORBIDDEN
+	EMPTY(1),
+	WHITE(2),
+	BLACK(3),
+	POSSIBLE(4), 
+	FORBIDDEN(5);
+	
+	int value;
+	
+	private PiecesType(int value) {
+		this.value = value;
+	}
+	
+	public int value() {
+        return value;
+    }
+	
 	
 }
