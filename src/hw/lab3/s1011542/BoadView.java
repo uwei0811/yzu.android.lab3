@@ -1,5 +1,6 @@
 package hw.lab3.s1011542;
 
+import hw.lab3.s1011542.reversi.PiecesHistory;
 import hw.lab3.s1011542.reversi.PiecesPos;
 import hw.lab3.s1011542.reversi.PiecesType;
 import hw.lab3.s1011542.reversi.Reversi;
@@ -25,28 +26,42 @@ public class BoadView extends View implements ReversiGameState,OnTouchListener{
 	private Handler mHandler;
 	private Thread mThread;
 	private int Clock;
-	private int Defaulf_Clock_time = 15;
+	private final int Defaulf_Clock_time = 15;
 	private boolean Thread_lock;
-	public BoadView(Activity context,PiecesType[][] getBoard,int get_clk) {
+	
+	public BoadView(Activity context) {
 		super(context);
-		game = new Reversi(0);
-		game.setDelegate(this);
-		gray_music = new Music(context);
+		this.game = new Reversi(0);
+		this.game.setDelegate(this);
+		this.gray_music = new Music(context);
 		this.setOnTouchListener(this);
-		set_Thread_lock(true);
-		setclk();
-		if(get_clk > 0)
-			Clock = get_clk;
-		mThread.start();
+		this.Thread_lock = true;
+		this.Clock = Defaulf_Clock_time;
+		this.setclk();
+		this.mThread.start();
+	}
+	
+	public BoadView(Activity context, Reversi game, int time) {
+		super(context);
+		this.game = game;
+		this.game.setDelegate(this);
+		this.gray_music = new Music(context);
+		this.setOnTouchListener(this);
+		this.Thread_lock = true;
+		this.setclk();
+		if(time > 0)
+			this.Clock = time;
+		
+		this.mThread.start();
 	}
 	
 	private void setclk()
 	{
-		Clock = Defaulf_Clock_time;
-		mThread = new Thread(){
+		this.Clock = this.Defaulf_Clock_time;
+		this.mThread = new Thread(){
 		    @Override
 		    public void run() {
-		        // TODO Auto-generated method stub           
+		    	
 		        while(Thread_lock){
 		            try{
 		                Message msg = new Message();
@@ -71,11 +86,6 @@ public class BoadView extends View implements ReversiGameState,OnTouchListener{
 		        super.handleMessage(msg);
 		    }  
 		};
-	}
-
-	public void set_Thread_lock(boolean lock)
-	{
-		Thread_lock = lock;
 	}
 	
 	private void Time_out()
@@ -243,4 +253,44 @@ public class BoadView extends View implements ReversiGameState,OnTouchListener{
 		game.back();
 		this.invalidate();
 	}
+	
+	public void setPause() {
+		this.Thread_lock = false;
+
+	}
+	
+	public void setResume() {
+		this.Thread_lock = true;
+	}
+
+	public PiecesType getCurenntPlayer() {
+		return this.game.getCurenntPlayer();
+	}
+	
+	public PiecesHistory getHistory() {
+		return this.game.getHistory();
+	}
+	
+	public void setHistory(PiecesHistory history) {
+		this.game.setHistory(history);
+	}
+	
+	public void setClock(int Clock) {
+		this.Clock = Clock;
+	}
+	
+	public int getClock() {
+		return this.Clock;
+	}
+	
+	public void setGame(Reversi game) {
+		this.game = game;
+	}
+	
+	public Reversi getGame() {
+		return this.game;
+	}
+	
+
+	
 }

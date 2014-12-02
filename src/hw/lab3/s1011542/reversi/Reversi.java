@@ -91,6 +91,14 @@ public class Reversi {
 		return this.posiible;
 	}
 	
+	public void setLevel(int level) {
+		this.level = level;
+	}
+	
+	public int getLevel() {
+		return this.level;
+	}
+	
 	public boolean isGameOver() {
 		return this.gameOver;
 	}
@@ -112,7 +120,9 @@ public class Reversi {
 	
 	public void setHistory(PiecesHistory history) {
 		this.history = history;
+		this.currentPlayer = this.history.getState().player;
 	}
+	
 	
 	public void setBoard(PiecesType board[][]) {
 		this.board = board;
@@ -128,6 +138,7 @@ public class Reversi {
 		this.clearPossibleMove();
 		this.currentPlayer = this.currentPlayer == PiecesType.BLACK ? PiecesType.WHITE : PiecesType.BLACK;
 		this.calulatePossible();
+		this.history.next(this.currentPlayer);
 		if(this.delegate != null)
 			this.delegate.ChangePlayer();
 		if(this.delegate != null) {
