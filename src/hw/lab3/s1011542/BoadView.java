@@ -26,7 +26,7 @@ public class BoadView extends View implements ReversiGameState,OnTouchListener{
 	private Handler mHandler;
 	private Thread mThread;
 	private int Clock;
-	private final int Defaulf_Clock_time = 15;
+	private final int Defaulf_Clock_time = 60;
 	private boolean Thread_lock;
 	private int level;
 	public BoadView(Activity context,int level) {

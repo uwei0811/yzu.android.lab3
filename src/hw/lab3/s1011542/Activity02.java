@@ -54,11 +54,29 @@ public class Activity02 extends Activity {
 	}
 
 	@Override
-	protected void onStop() {
+	protected void onPause() {
 		saveData();
-		super.onStop();
+		super.onPause();
+	}
+	
+	@Override
+	protected void onRestart() {
+		setContentView(R.layout.activity02);
+		Intent intent = this.getIntent();
+		Bundle bundle = intent.getExtras();
+		int level = bundle.getInt("level");	
+		init();
+		setlinster();
+		Log.d("level",""+level);
+		view = new BoadView(this,level);
+		
+		ly02.addView(view, 480, 530);
+		loadData();
+		view.invalidate();
+		super.onRestart();
 	}
 
+	
 	@Override
 	protected void onResume() {
 		loadData();
@@ -186,14 +204,15 @@ public class Activity02 extends Activity {
 					pstate.getSteps().size());
 			editor.putString("history_state" + Integer.toString(i)
 					+ "state_player", pstate.getPlayer().toString());
+			Log.i("Activity02", "Steps size  " + Integer.toString(pstate.getSteps().size()));
 			for (int j = 0; j < pstate.getSteps().size(); j++) {
-
+				//Log.i("Activity02", "NOP: " +);
 				editor.putInt("history_state" + Integer.toString(i) + "state"
 						+ Integer.toString(j) + "_i", pstate.getSteps().get(j)
 						.i());
 				editor.putInt("history_state" + Integer.toString(i) + "state"
 						+ Integer.toString(j) + "_j", pstate.getSteps().get(j)
-						.i());
+						.j());
 				editor.putString("history_state" + Integer.toString(i)
 						+ "state" + Integer.toString(j) + "_type", pstate
 						.getSteps().get(j).getType().toString());
@@ -223,7 +242,7 @@ public class Activity02 extends Activity {
 			Reversi game = new Reversi(level);
 			for (int i = 0; i < 8; i++)
 				for (int j = 0; j < 8; j++) {
-					Log.i("Activity02", "BD[" + i + "][" + j + "]");
+					//Log.i("Activity02", "BD[" + i + "][" + j + "]");
 					String s = settings.getString("BD[" + i + "][" + j + "]",
 							"");
 					if (!s.equals("")) {
