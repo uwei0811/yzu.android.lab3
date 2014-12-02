@@ -29,6 +29,7 @@ public class BoadView extends View implements ReversiGameState,OnTouchListener{
 	private final int Defaulf_Clock_time = 60;
 	private boolean Thread_lock;
 	private int level;
+	
 	public BoadView(Activity context,int level) {
 		super(context);
 		this.game = new Reversi(0);
@@ -43,23 +44,21 @@ public class BoadView extends View implements ReversiGameState,OnTouchListener{
 		this.mThread.start();
 	}
 	
-	public BoadView(Activity context, Reversi game, int time) {
+	/*public BoadView(Activity context) {
 		super(context);
-		this.game = game;
 		this.game.setDelegate(this);
-		this.gray_music = new Music(context);
+		//this.gray_music = new Music(context);
 		this.setOnTouchListener(this);
-		this.Thread_lock = true;
-		this.setclk();
-		if(time > 0)
-			this.Clock = time;
-		
-		this.mThread.start();
-	}
+		//this.Thread_lock = true;
+		//this.setclk();
+		//this.mThread.start();
+	}*/
 	
 	private void setclk()
 	{
 		this.Clock = this.Defaulf_Clock_time;
+		if(this.mThread != null)
+			mThread.interrupt();
 		this.mThread = new Thread(){
 		    @Override
 		    public void run() {
@@ -68,8 +67,14 @@ public class BoadView extends View implements ReversiGameState,OnTouchListener{
 		            try{
 		                Message msg = new Message();
 		                msg.what = 1;
+		                if( mHandler == null) {
+ 		                	this.interrupt();
+ 		                	return;
+		                }
 		                mHandler.sendMessage(msg);
 		                Thread.sleep(1000);
+		            } catch ( InterruptedException e) {
+		            	return;
 		            }
 		            catch(Exception e){
 		                e.printStackTrace();
@@ -108,7 +113,7 @@ public class BoadView extends View implements ReversiGameState,OnTouchListener{
 	{
 		rest_clk();
 		game = null;
-		game = new Reversi(0);
+		game = new Reversi(level);
 		game.setDelegate(this);
 		game.setLevel(level);
 		RefreshGame();
@@ -297,6 +302,20 @@ public class BoadView extends View implements ReversiGameState,OnTouchListener{
 		return this.game;
 	}
 	
-
+	public void destoryMusic() {
+		this.gray_music.destory();
+	}
+	
+	public void Destroy() {
+		if(this.mHandler !=null) {
+			this.mHandler.removeCallbacks(mThread);
+			this.mHandler = null;
+		}
+		if( mThread != null && !mThread.interrupted()) {
+			mThread.interrupt();
+			mThread = null; 
+		}
+		
+	}
 	
 }

@@ -317,25 +317,29 @@ public class Reversi {
 		}
 		
 		if( this.board[0][0] == PiecesType.EMPTY || this.board[0][0] == PiecesType.POSSIBLE) {
-			Step hstep = new Step(start, board[0][0]);
+			PiecesPos p = new PiecesPos(0,0);
+			Step hstep = new Step(p, board[0][0]);
 			this.history.add(hstep);
 			this.board[0][0] = PiecesType.FORBIDDEN;
 			return;
 		}
 		if( this.board[this.dim-1][0] == PiecesType.EMPTY || this.board[this.dim-1][0] == PiecesType.POSSIBLE) {
-			Step hstep = new Step(start, board[this.dim-1][0]);
+			PiecesPos p = new PiecesPos(this.dim-1,0);
+			Step hstep = new Step(p, board[this.dim-1][0]);
 			this.history.add(hstep);
 			this.board[this.dim-1][0] = PiecesType.FORBIDDEN;
 			return;
 		}
 		if( this.board[0][this.dim-1] == PiecesType.EMPTY || this.board[0][this.dim-1] == PiecesType.POSSIBLE) {
-			Step hstep = new Step(start, board[0][this.dim-1]);
+			PiecesPos p = new PiecesPos(0,this.dim-1);
+			Step hstep = new Step(p, board[0][this.dim-1]);
 			this.history.add(hstep);
 			this.board[0][this.dim-1] = PiecesType.FORBIDDEN;
 			return;
 		}
 		if( this.board[this.dim-1][this.dim-1] == PiecesType.EMPTY || this.board[this.dim-1][this.dim-1] == PiecesType.POSSIBLE) {
-			Step hstep = new Step(start, board[this.dim-1][this.dim-1]);
+			PiecesPos p = new PiecesPos(this.dim-1,this.dim-1);
+			Step hstep = new Step(p, board[this.dim-1][this.dim-1]);
 			this.history.add(hstep);
 			this.board[this.dim-1][this.dim-1] = PiecesType.FORBIDDEN;
 			return;
@@ -361,7 +365,8 @@ public class Reversi {
 			}
 			
 			if( this.board[i][j] == PiecesType.EMPTY) {
-				Step hstep = new Step(start, board[i][j]);
+				
+				Step hstep = new Step(p, board[i][j]);
 				this.history.add(hstep);
 				this.board[i][j] = PiecesType.FORBIDDEN;
 				pos.clear();

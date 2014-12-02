@@ -48,13 +48,16 @@ public class Activity02 extends Activity {
 		init();
 		setlinster();
 		Log.d("level",""+level);
-		view = new BoadView(this,level);
+		if(view == null)
+			view = new BoadView(this,level);
 		
 		ly02.addView(view, 480, 530);
 	}
 
 	@Override
 	protected void onPause() {
+		ly02.removeAllViews();
+		view.destoryMusic();
 		saveData();
 		super.onPause();
 	}
@@ -68,8 +71,8 @@ public class Activity02 extends Activity {
 		init();
 		setlinster();
 		Log.d("level",""+level);
-		view = new BoadView(this,level);
-		
+		if(view == null)
+			view = new BoadView(this,level);
 		ly02.addView(view, 480, 530);
 		loadData();
 		view.invalidate();
@@ -239,7 +242,7 @@ public class Activity02 extends Activity {
 			PiecesType board[][] = new PiecesType[8][8];
 			int level = settings.getInt("level", -1);
 			Log.i("Activity02", "level " + Integer.toString(level));
-			Reversi game = new Reversi(level);
+			view.getGame().setLevel(level);
 			for (int i = 0; i < 8; i++)
 				for (int j = 0; j < 8; j++) {
 					//Log.i("Activity02", "BD[" + i + "][" + j + "]");
@@ -250,12 +253,11 @@ public class Activity02 extends Activity {
 						board[i][j] = getPiecesType(s);
 
 					} else {
-						game = null;
 						return false;
 					}
 
 				}
-			game.setBoard(board);
+			view.getGame().setBoard(board);
 			int time = settings.getInt("time", 15);
 			Log.i("Activity02", "time " + Integer.toString(time));
 			view.setPause();
@@ -313,12 +315,13 @@ public class Activity02 extends Activity {
 				}
 				history.getList().add(pstate);
 			}
-			game.setHistory(history);
-			view.setGame(game);
+			//game.setHistory(history);
+			view.reset();
+			view.getGame().setHistory(history);
 			view.setResume();
-			view.invalidate();
 			settings.edit().clear();
 			settings.edit().commit();
+			
 			Log.i("Activity02", "LoadData Success");
 			return true;
 
@@ -330,4 +333,6 @@ public class Activity02 extends Activity {
 		}
 
 	}
+	
+
 }
